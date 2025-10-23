@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,45 +13,225 @@ namespace MotionApp
 {
     public partial class Form1 : Form
     {
-        // Azure SQL Serveræ¥ç¶šæ–‡å­—åˆ—ï¼ˆãƒ†ã‚¹ãƒˆç”¨ï¼‰
-        // å®Ÿéš›ã®å€¤ã«ç½®ãæ›ãˆã¦ãã ã•ã„
+        // Azure SQL ServerÚ‘±•¶š—ñiƒeƒXƒg—pj
+        // ÀÛ‚Ì’l‚É’u‚«Š·‚¦‚Ä‚­‚¾‚³‚¢
         private readonly string connectionString = "Server=tcp:fasol-zaiseki.database.windows.net,1433;Initial Catalog=motion;Persist Security Info=False;User ID=fasol;Password=Zaiseki@pp;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
+        private Label labelLoading;
 
         public Form1()
         {
             InitializeComponent();
+            InitializeLoadingLabel();
+            InitializeDataGridViewEvents();
+        }
+
+        private void InitializeLoadingLabel()
+        {
+            // ƒ[ƒh’†•\¦—p‚ÌLabel‚ğì¬
+            labelLoading = new Label();
+            labelLoading.Text = "ƒ[ƒh’†‚Å‚·...";
+            labelLoading.Font = new Font("MS UI Gothic", 14, FontStyle.Bold);
+            labelLoading.ForeColor = Color.Blue;
+            labelLoading.AutoSize = true;
+            labelLoading.BackColor = Color.White;
+            labelLoading.Visible = false;
+            
+            // ƒtƒH[ƒ€‚É’Ç‰Á
+            this.Controls.Add(labelLoading);
+            labelLoading.BringToFront();
+            
+            // ˆÊ’u‚ğ’†‰›‚Éİ’èiƒtƒH[ƒ€‚ÌƒTƒCƒY‚ª•Ï‚í‚Á‚½‚Æ‚«‚à‘Î‰j
+            this.Resize += (s, e) => CenterLoadingLabel();
+            CenterLoadingLabel();
+        }
+
+        private void InitializeDataGridViewEvents()
+        {
+            // s‚ÌF‚ğ•ÏX‚·‚é‚½‚ß‚ÌƒCƒxƒ“ƒg‚ğ’Ç‰Á
+            dataGridView1.CellFormatting += DataGridView1_CellFormatting;
+        }
+
+        private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView1.Rows[e.RowIndex].IsNewRow)
+                return;
+
+            // zaiseki_status—ñ‚ÌƒCƒ“ƒfƒbƒNƒX‚ğæ“¾
+            if (dataGridView1.Columns.Contains("zaiseki_status"))
+            {
+                var zaisekiStatusCell = dataGridView1.Rows[e.RowIndex].Cells["zaiseki_status"];
+                
+                if (zaisekiStatusCell.Value != null && zaisekiStatusCell.Value != DBNull.Value)
+                {
+                    string status = zaisekiStatusCell.Value.ToString();
+                    Color rowColor = Color.White; // ƒfƒtƒHƒ‹ƒg‚Í”’
+                    
+                    // İÈó‹µ‚É‰‚¶‚ÄF‚ğİ’è
+                    switch (status)
+                    {
+                        case "İÈ":
+                            rowColor = Color.LightBlue;
+                            break;
+                        case "‹A‘î":
+                            rowColor = Color.LightGray;
+                            break;
+                        case "İ‘î‹Î–±":
+                            rowColor = Color.LightGreen;
+                            break;
+                        case "o’£":
+                            rowColor = Color.LightCoral;
+                            break;
+                    }
+                    
+                    // s‘S‘Ì‚Ì”wŒiF‚ğİ’è
+                    dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = rowColor;
+                }
+            }
+        }
+
+        private void CenterLoadingLabel()
+        {
+            labelLoading.Left = (this.ClientSize.Width - labelLoading.Width) / 2;
+            labelLoading.Top = (this.ClientSize.Height - labelLoading.Height) / 2;
+        }
+
+        private async void Form1_Load(object sender, EventArgs e)
+        {
+            // ƒtƒH[ƒ€“Ç‚İ‚İ‚Éƒf[ƒ^‚ğ•\¦
+            await LoadUserStatusDataAsync();
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
+            // ƒ{ƒ^ƒ“ƒNƒŠƒbƒN‚Éƒf[ƒ^‚ğXV
+            await LoadUserStatusDataAsync();
+        }
+
+        private async Task LoadUserStatusDataAsync()
+        {
             try
             {
-                // ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã‹ã‚‰ä»¶æ•°ã‚’å–å¾—
-                int userCount = await GetUserCountAsync();
+                // ƒ[ƒh’†•\¦‚ğ•\¦
+                ShowLoading(true);
                 
-                // ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã§è¡¨ç¤º
-                MessageBox.Show($"m_userãƒ†ãƒ¼ãƒ–ãƒ«ã®ä»¶æ•°: {userCount}ä»¶", "ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ä»¶æ•°", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // ƒf[ƒ^ƒx[ƒX‚©‚çJOIN‚µ‚½ƒf[ƒ^‚ğæ“¾‚µ‚ÄDataGridView‚É•\¦
+                DataTable userData = await GetUserStatusDataAsync();
+                
+                // DataGridView‚Éƒf[ƒ^‚ğƒoƒCƒ“ƒh
+                dataGridView1.DataSource = userData;
+                
+                // —ñ‚Ì•\¦İ’è
+                ConfigureDataGridViewColumns();
             }
             catch (Exception ex)
             {
-                // ã‚¨ãƒ©ãƒ¼ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
-                MessageBox.Show($"ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: {ex.Message}", "ã‚¨ãƒ©ãƒ¼", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // ƒGƒ‰[‚Ìê‡‚ÍƒGƒ‰[ƒƒbƒZ[ƒW‚ğ•\¦
+                MessageBox.Show($"ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: {ex.Message}", "ƒGƒ‰[", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // ƒ[ƒh’†•\¦‚ğ”ñ•\¦
+                ShowLoading(false);
             }
         }
 
-        private async Task<int> GetUserCountAsync()
+        private void ShowLoading(bool show)
         {
+            labelLoading.Visible = show;
+            dataGridView1.Enabled = !show;
+            button1.Enabled = !show;
+            
+            if (show)
+            {
+                CenterLoadingLabel();
+                labelLoading.BringToFront();
+            }
+            
+            // UI‚ğ‘¦À‚ÉXV
+            Application.DoEvents();
+        }
+
+        private void ConfigureDataGridViewColumns()
+        {
+            // ‚·‚×‚Ä‚Ì—ñ‚ğ”ñ•\¦‚É‚·‚é
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                column.Visible = false;
+            }
+            
+            // display_user_name‚Æzaiseki_status‚Ænote‚ğ•\¦‚·‚é
+            if (dataGridView1.Columns.Contains("display_user_name"))
+            {
+                dataGridView1.Columns["display_user_name"].Visible = true;
+                dataGridView1.Columns["display_user_name"].HeaderText = "ƒ†[ƒU[–¼";
+                dataGridView1.Columns["display_user_name"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView1.Columns["display_user_name"].ReadOnly = true;
+            }
+            
+            if (dataGridView1.Columns.Contains("zaiseki_status"))
+            {
+                // Šù‘¶‚Ì—ñ‚ğíœ‚µ‚ÄComboBoxColumn‚É’u‚«Š·‚¦‚é
+                int columnIndex = dataGridView1.Columns["zaiseki_status"].Index;
+                dataGridView1.Columns.Remove("zaiseki_status");
+                
+                // ComboBoxColumn‚ğì¬
+                DataGridViewComboBoxColumn comboColumn = new DataGridViewComboBoxColumn();
+                comboColumn.Name = "zaiseki_status";
+                comboColumn.DataPropertyName = "zaiseki_status";
+                comboColumn.HeaderText = "İÈó‹µ";
+                comboColumn.Items.AddRange(new string[] { "İÈ", "‹A‘î", "İ‘î‹Î–±", "o’£" });
+                comboColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                comboColumn.FlatStyle = FlatStyle.Flat; // ComboBox‚Ì”wŒiF‚ğ”½‰f‚³‚¹‚é‚½‚ß
+                
+                // Œ³‚ÌˆÊ’u‚É‘}“ü
+                dataGridView1.Columns.Insert(columnIndex, comboColumn);
+            }
+            
+            if (dataGridView1.Columns.Contains("note"))
+            {
+                dataGridView1.Columns["note"].Visible = true;
+                dataGridView1.Columns["note"].HeaderText = "”õl";
+                dataGridView1.Columns["note"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+        }
+
+        private async Task<DataTable> GetUserStatusDataAsync()
+        {
+            DataTable dataTable = new DataTable();
+            
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT COUNT(*) FROM m_user";
+                // m_userAt_status_periodAt_zaiseki‚ğJOIN
+                string query = @"
+                    SELECT 
+                        u.user_id,
+                        u.user_name,
+                        u.user_name_e,
+                        u.employee_number,
+                        u.display_user_name,
+                        z.zaiseki_status,
+                        z.sort_id,
+                        s.project_code,
+                        s.note,
+                        s.updated_at
+                    FROM m_user u
+                    LEFT JOIN t_status_period s ON u.user_id = s.user_id
+                    LEFT JOIN t_zaiseki z ON u.user_id = z.user_id AND z.is_enable = 1
+                    ORDER BY z.sort_id, u.user_id";
+                
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    object result = await command.ExecuteScalarAsync();
-                    return Convert.ToInt32(result);
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                    {
+                        await Task.Run(() => adapter.Fill(dataTable));
+                    }
                 }
             }
+            
+            return dataTable;
         }
     }
 }

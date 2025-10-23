@@ -1,16 +1,16 @@
-ï»¿namespace MotionApp
+namespace MotionApp
 {
     partial class Form1
     {
         /// <summary>
-        /// å¿…è¦ãªãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å¤‰æ•°ã§ã™ã€‚
+        /// •K—v‚ÈƒfƒUƒCƒi[•Ï”‚Å‚·B
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// ä½¿ç”¨ä¸­ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã—ã¾ã™ã€‚
+        /// g—p’†‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚ÄƒNƒŠ[ƒ“ƒAƒbƒv‚µ‚Ü‚·B
         /// </summary>
-        /// <param name="disposing">ãƒãƒãƒ¼ã‚¸ãƒ‰ ãƒªã‚½ãƒ¼ã‚¹ã‚’ç ´æ£„ã™ã‚‹å ´åˆã¯ true ã‚’æŒ‡å®šã—ã€ãã®ä»–ã®å ´åˆã¯ false ã‚’æŒ‡å®šã—ã¾ã™ã€‚</param>
+        /// <param name="disposing">ƒ}ƒl[ƒWƒh ƒŠƒ\[ƒX‚ğ”jŠü‚·‚éê‡‚Í true ‚ğw’è‚µA‚»‚Ì‘¼‚Ìê‡‚Í false ‚ğw’è‚µ‚Ü‚·B</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,11 +20,11 @@
             base.Dispose(disposing);
         }
 
-        #region Windows ãƒ•ã‚©ãƒ¼ãƒ  ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ã§ç”Ÿæˆã•ã‚ŒãŸã‚³ãƒ¼ãƒ‰
+        #region Windows ƒtƒH[ƒ€ ƒfƒUƒCƒi[‚Å¶¬‚³‚ê‚½ƒR[ƒh
 
         /// <summary>
-        /// ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ ã‚µãƒãƒ¼ãƒˆã«å¿…è¦ãªãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ã€‚ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å†…å®¹ã‚’
-        /// ã‚³ãƒ¼ãƒ‰ ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼ã§å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚
+        /// ƒfƒUƒCƒi[ ƒTƒ|[ƒg‚É•K—v‚Èƒƒ\ƒbƒh‚Å‚·B‚±‚Ìƒƒ\ƒbƒh‚Ì“à—e‚ğ
+        /// ƒR[ƒh ƒGƒfƒBƒ^[‚Å•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
         /// </summary>
         private void InitializeComponent()
         {
@@ -35,20 +35,30 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(12, 82);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 21;
-            this.dataGridView1.Size = new System.Drawing.Size(341, 356);
+            this.dataGridView1.ReadOnly = false;
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowTemplate.Height = 35;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.Size = new System.Drawing.Size(776, 356);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.MultiSelect = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(12, 38);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(100, 30);
             this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
+            this.button1.Text = "XV";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -56,11 +66,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(362, 447);
+            this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "İÈŠÇ—ƒVƒXƒeƒ€";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
@@ -72,4 +83,3 @@
         private System.Windows.Forms.Button button1;
     }
 }
-
